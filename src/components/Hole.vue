@@ -5,14 +5,10 @@
 <script>
 export default {
   name: 'Hole',
-  props: {
-    mole: {
-      type: Boolean,
-      default: false
-    },
-    land: {
-      type: Boolean,
-      default: false
+  data() {
+    return {
+      mole: false,
+      land: false
     }
   },
   methods: {

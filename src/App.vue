@@ -11,7 +11,6 @@
         </hole>
       </div>
     </div>
-    <button @click="start()">Start</button>
     <button @click="retry()">Retry</button>
   </div>
   
@@ -29,87 +28,88 @@ export default {
   }, 
   data() {
     return {
-      count: 13,
+      restCount: 13,
       holeList: [
-        {id: 1,  type: Number},
-        {id: 2,  type: Number},
-        {id: 3,  type: Number},
-        {id: 4,  type: Number},
-        {id: 5,  type: Number},
-        {id: 6,  type: Number},
-        {id: 7,  type: Number},
-        {id: 8,  type: Number},
-        {id: 9,  type: Number},
-        {id: 10, type: Number},
-        {id: 11, type: Number},
-        {id: 12, type: Number},
-        {id: 13, type: Number},
-        {id: 14, type: Number},
-        {id: 15, type: Number},
-        {id: 16, type: Number}
+        {id: 1,  check: false},
+        {id: 2,  check: false},
+        {id: 3,  check: false},
+        {id: 4,  check: false},
+        {id: 5,  check: false},
+        {id: 6,  check: false},
+        {id: 7,  check: false},
+        {id: 8,  check: false},
+        {id: 9,  check: false},
+        {id: 10, check: false},
+        {id: 11, check: false},
+        {id: 12, check: false},
+        {id: 13, check: false},
+        {id: 14, check: false},
+        {id: 15, check: false},
+        {id: 16, check: false}
       ],
       assignHole: [],
-      catch:0
+      moleCatch:0,
     }
   },
   methods: {
     start() {
+      this.assignMoleHole();
       alert("Start Whac a mole!!");
-      this.assignHole = [];
-      const arr = this.assignHole;
-      for(var cnt=0; cnt<5; ) {
+    },
+    capture(idx) {
+      if(this.defineAlertMsg(idx).length>0) return;
+
+      let moleFlag = this.checkMoleFlag(idx);
+      if(moleFlag == true)  this.$children[idx].mole = true;
+      else                  this.$children[idx].land = true;
+
+      this.count(idx);
+    },
+    count(data) {
+      this.restCount--; 
+      this.holeList[data-1].check = true;
+    },
+    assignMoleHole(data) {
+      for(let cnt=0; cnt<5; ) {
 
         const holeNum = Math.floor(Math.random() * 16) + 1;
         const holeFlag = true;
-        arr.map(function(value){
-
-          if(value == holeNum) {
-            holeFlag = false;
-          }
+        this.assignHole.map(value => {
+          if(value == holeNum) holeFlag = false;
         });
 
         if(holeFlag == true) {
-          arr.push(holeNum);
+          this.assignHole.push(holeNum);
           holeFlag = false;
           cnt++;
         }
       }
     },
-    capture(data) {
-      if(this.assignHole.length == 0) {
-        alert("Click start button!")
-        return;
-      }
-
-      if(this.catch == 5) {
-        alert("You win!!");
-        return;
-      }
-
-      this.count = this.count - 1; 
-      if(this.count<0) {
-        alert("over!");
-        return;
-      }
-
-      var moleFlag = false;
-      for(var cnt=0; cnt<5; cnt++) {
-        if(this.assignHole[cnt] == data) {
-          moleFlag = true;
-          this.catch++;
+    checkMoleFlag(data) {
+      let flag = false
+      this.assignHole.map( value => {
+        if(value == data) {
+          flag = true;
+          this.moleCatch++;
         }
-      }
-
-      if(moleFlag == true) {
-        this.$children[data].mole = true;  
-      } else {
-        this.$children[data].land = true;
-      }
+      });
+      return flag;
+    },
+    defineAlertMsg(data) {
+      let msg = "";
+      if(this.moleCatch == 5)                  msg = "You Win!!";
+      if(this.restCount<0)                     msg = "Over!!";
+      if(this.holeList[data-1].check ==  true) msg = "this hole is already opened";
+      if(msg.length>0)                         alert(msg);
+      return msg;
     },
     retry() {
       window.location.reload();
     }
   },
+  mounted() {
+    this.start();
+  }, 
 }
 
 </script>
@@ -135,7 +135,7 @@ body {
   border-collapse:collapse;
 }
 button {
-  width: 405px;
+  width: 810px;
   border: 1px solid gray;
   height: 50px;
   border-radius: 5px;
