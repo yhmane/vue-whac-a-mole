@@ -12,22 +12,26 @@
       </div>
     </div>
     <button @click="retry()">Retry</button>
+    <modal :modalMsg="modalMsg" :modal="modal" @close-modal="modal = false"></modal>
   </div>
-  
 </template>
 
 <script>
 import Title from './components/Title.vue'
 import Hole from './components/Hole.vue'
+import Modal from './components/Modal.vue'
 
 export default {
   name: 'app',
   components: {
     Title,
-    Hole
+    Hole,
+    Modal
   }, 
   data() {
     return {
+      modal: false,
+      modalMsg: "",
       restCount: 13,
       holeList: [
         {id: 1,  check: false},
@@ -54,7 +58,6 @@ export default {
   methods: {
     start() {
       this.assignMoleHole();
-      alert("Start Whac a mole!!");
     },
     capture(idx) {
       if(this.defineAlertMsg(idx).length>0) return;
@@ -98,17 +101,22 @@ export default {
     defineAlertMsg(data) {
       let msg = "";
       if(this.moleCatch == 5)                  msg = "You Win!!";
-      if(this.restCount<0)                     msg = "Over!!";
-      if(this.holeList[data-1].check ==  true) msg = "this hole is already opened";
-      if(msg.length>0)                         alert(msg);
+      if(this.restCount<0)                     msg = "Game Over!!";
+      if(this.holeList[data-1].check ==  true) msg = "This hole is already opened";
+      if(msg.length>0)                         this.modalPopup(msg, "black");
       return msg;
     },
     retry() {
       window.location.reload();
+    },
+    modalPopup(msg) {
+      this.modal = true;
+      this.modalMsg = msg;
     }
   },
   mounted() {
     this.start();
+    this.modalPopup("Start Whac a mole!!");
   }, 
 }
 
